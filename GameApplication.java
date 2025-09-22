@@ -8,7 +8,7 @@ import com.snakeladder.factory.BoardGeneratorFactory;
 import java.util.*;
 
 public class GameApplication {
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final Scanner sc = new Scanner(System.in);
     private static final GameDisplay gameDisplay = new GameDisplay();
     
     public static void main(String[] args) {
@@ -44,7 +44,7 @@ public class GameApplication {
             System.err.println("❌ Error: " + e.getMessage());
             e.printStackTrace();
         } finally {
-            scanner.close();
+            sc.close();
         }
     }
     
@@ -73,7 +73,7 @@ public class GameApplication {
         while (true) {
             try {
                 System.out.print("\nEnter board size (e.g., 7 for 7x7 board) [5-15]: ");
-                int size = Integer.parseInt(scanner.nextLine().trim());
+                int size = Integer.parseInt(sc.nextLine().trim());
                 
                 if (size >= 5 && size <= 15) {
                     return size;
@@ -90,7 +90,7 @@ public class GameApplication {
         while (true) {
             try {
                 System.out.print("Enter number of players [2-6]: ");
-                int count = Integer.parseInt(scanner.nextLine().trim());
+                int count = Integer.parseInt(sc.nextLine().trim());
                 
                 if (count >= 2 && count <= 6) {
                     return count;
@@ -112,7 +112,7 @@ public class GameApplication {
         for (int i = 1; i <= playerCount; i++) {
             while (true) {
                 System.out.print("Player " + i + " name: ");
-                String name = scanner.nextLine().trim();
+                String name = sc.nextLine().trim();
                 
                 if (name.isEmpty()) {
                     System.out.println("❌ Name cannot be empty!");
@@ -138,7 +138,7 @@ public class GameApplication {
         while (true) {
             try {
                 System.out.print("Enter choice [1-3]: ");
-                int choice = Integer.parseInt(scanner.nextLine().trim());
+                int choice = Integer.parseInt(sc.nextLine().trim());
                 
                 switch (choice) {
                     case 1:
@@ -166,7 +166,7 @@ public class GameApplication {
             System.out.println("\n" + game.getCurrentPlayer().getName() + "'s turn!");
             System.out.print("Press Enter to roll dice (or 'q' to quit, 'h' for help): ");
             
-            String input = scanner.nextLine().trim().toLowerCase();
+            String input = sc.nextLine().trim().toLowerCase();
             
             if ("q".equals(input) || "quit".equals(input)) {
                 System.out.println("👋 Thanks for playing! Goodbye!");
@@ -215,7 +215,7 @@ public class GameApplication {
         while (true) {
             try {
                 System.out.print("Enter choice [1-2]: ");
-                int choice = Integer.parseInt(scanner.nextLine().trim());
+                int choice = Integer.parseInt(sc.nextLine().trim());
                 
                 switch (choice) {
                     case 1:
@@ -233,7 +233,7 @@ public class GameApplication {
     
     private static boolean askForPreset() {
         System.out.print("\n🎯 Would you like to use a preset configuration? (y/n): ");
-        String response = scanner.nextLine().trim().toLowerCase();
+        String response = sc.nextLine().trim().toLowerCase();
         return response.startsWith("y");
     }
     
@@ -246,7 +246,7 @@ public class GameApplication {
         while (true) {
             try {
                 System.out.print("Enter choice [1-3]: ");
-                int choice = Integer.parseInt(scanner.nextLine().trim());
+                int choice = Integer.parseInt(sc.nextLine().trim());
                 
                 switch (choice) {
                     case 1:

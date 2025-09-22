@@ -3,24 +3,27 @@ package com.snakeladder.model;
 import java.util.Random;
 
 public class Dice {
-    private static final int MIN_VALUE = 1;
-    private static final int MAX_VALUE = 6;
-    private final Random random;
+    private Random rand;
     
     public Dice() {
-        this.random = new Random();
+        this.rand = new Random();
     }
     
-    public Dice(Random random) {
-        this.random = random;
+    public Dice(Random r) {
+        rand = r;  // no this keyword needed here
     }
     
     public int roll() {
-        return random.nextInt(MAX_VALUE) + MIN_VALUE;
+        // Generate random number from 1-6
+        int result = rand.nextInt(6) + 1;
+        return result;
     }
     
-    public static boolean isSix(int value) {
-        return value == MAX_VALUE;
+    public static boolean isSix(int diceValue) {
+        if (diceValue == 6) 
+            return true;
+        else 
+            return false;
     }
 }
 

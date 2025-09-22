@@ -1,25 +1,26 @@
 package com.snakeladder.model;
 
 public class Snake implements BoardEntity {
-    private final int head;
-    private final int tail;
+    private final int headPos;
+    private final int tailPos;
     
     public Snake(int head, int tail) {
+        // make sure head is higher than tail
         if (head <= tail) {
             throw new IllegalArgumentException("Snake head must be greater than tail");
         }
-        this.head = head;
-        this.tail = tail;
+        this.headPos = head;
+        this.tailPos = tail;
     }
     
     @Override
     public int getStartPosition() {
-        return head;
+        return headPos;
     }
     
     @Override
     public int getEndPosition() {
-        return tail;
+        return tailPos;
     }
     
     @Override
@@ -28,16 +29,18 @@ public class Snake implements BoardEntity {
     }
     
     @Override
-    public int transform(int currentPosition) {
-        if (currentPosition == head) {
-            return tail;
+    public int transform(int pos) {
+        if (pos == headPos) {
+            // player landed on snake head, send to tail
+            return tailPos;
+        } else {
+            return pos;
         }
-        return currentPosition;
     }
     
     @Override
     public String toString() {
-        return String.format("Snake{head=%d, tail=%d}", head, tail);
+        return "Snake{head=" + headPos + ", tail=" + tailPos + "}";
     }
 }
 

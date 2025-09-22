@@ -4,69 +4,77 @@ import com.snakeladder.strategy.BoardGenerationStrategy;
 import java.util.*;
 
 public class Board {
-    private final int size;
-    private final int totalCells;
-    private final Map<Integer, BoardEntity> entities;
-    private final BoardGenerationStrategy generationStrategy;
+    private int boardSize;
+    private int numberOfCells;
+    private Map<Integer, BoardEntity> boardEntities;
+    private BoardGenerationStrategy strategy;
     
-    public Board(int size, GameLevelInterface level, BoardGenerationStrategy generationStrategy) {
-        this.size = size;
-        this.totalCells = size * size;
-        this.generationStrategy = generationStrategy;
-        this.entities = new HashMap<>();
-        initializeBoard(level);
+    public Board(int sz, GameLevelInterface gameLevel, BoardGenerationStrategy genStrategy) {
+        this.boardSize = sz;
+        numberOfCells = sz * sz;  // calculate total cells
+        strategy = genStrategy;
+        boardEntities = new HashMap<Integer, BoardEntity>();
+        setupBoard(gameLevel);
     }
     
-    private void initializeBoard(GameLevelInterface level) {
-        List<BoardEntity> boardEntities = generationStrategy.generateEntities(totalCells, level);
-        for (BoardEntity entity : boardEntities) {
-            entities.put(entity.getStartPosition(), entity);
+    private void setupBoard(GameLevelInterface level) {
+        List<BoardEntity> entityList = strategy.generateEntities(numberOfCells, level);
+        // put entities in the map
+        for (BoardEntity e : entityList) {
+            boardEntities.put(e.getStartPosition(), e);
         }
     }
     
     public int getSize() {
-        return size;
+        return this.boardSize;
     }
     
     public int getTotalCells() {
-        return totalCells;
+        return numberOfCells;
     }
     
-    public Position getPosition(int cellNumber) {
-        if (cellNumber < 1 || cellNumber > totalCells) {
-            throw new IllegalArgumentException("Invalid cell number: " + cellNumber);
+    public Position getPosition(int cellNum) {
+        if (cellNum < 1 || cellNum > numberOfCells) {
+            throw new IllegalArgumentException("Invalid cell number: " + cellNum);
         }
         
-        int row = (cellNumber - 1) / size;
-        int column;
+        int r = (cellNum - 1) / boardSize;
+        int c;
         
-        if (row % 2 == 0) {
-            column = (cellNumber - 1) % size;
+        // snake pattern - odd rows go right to left, even rows go left to right  
+        if (r % 2 == 0) {
+            c = (cellNum - 1) % boardSize;
         } else {
-            column = size - 1 - ((cellNumber - 1) % size);
+            c = boardSize - 1 - ((cellNum - 1) % boardSize);
         }
         
-        return new Position(row, column, cellNumber);
+        return new Position(r, c, cellNum);
     }
     
-    public int transformPosition(int position) {
-        BoardEntity entity = entities.get(position);
+    public int transformPosition(int pos) {
+        BoardEntity entity = boardEntities.get(pos);
         if (entity != null) {
-            return entity.transform(position);
+            return entity.transform(pos);
+        } else {
+            return pos;
         }
-        return position;
     }
     
-    public BoardEntity getEntityAt(int position) {
-        return entities.get(position);
+    public BoardEntity getEntityAt(int pos) {
+        return boardEntities.get(pos);
     }
     
     public List<BoardEntity> getAllEntities() {
-        return new ArrayList<>(entities.values());
+        List<BoardEntity> allEntities = new ArrayList<>();
+        allEntities.addAll(boardEntities.values());
+        return allEntities;
     }
     
-    public boolean isValidPosition(int position) {
-        return position >= 0 && position <= totalCells;
+    public boolean isValidPosition(int pos) {
+        if (pos >= 0 && pos <= numberOfCells) {
+            return true;
+        }
+        return false;
     }
 }
 

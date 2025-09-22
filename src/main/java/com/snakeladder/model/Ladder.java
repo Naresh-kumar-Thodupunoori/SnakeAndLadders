@@ -1,25 +1,25 @@
 package com.snakeladder.model;
 
 public class Ladder implements BoardEntity {
-    private final int bottom;
-    private final int top;
+    private final int start;
+    private final int end;
     
-    public Ladder(int bottom, int top) {
-        if (bottom >= top) {
+    public Ladder(int startPos, int endPos) {
+        if(startPos >= endPos) {
             throw new IllegalArgumentException("Ladder bottom must be less than top");
         }
-        this.bottom = bottom;
-        this.top = top;
+        start = startPos;
+        end = endPos;
     }
     
     @Override
     public int getStartPosition() {
-        return bottom;
+        return this.start;
     }
     
     @Override
     public int getEndPosition() {
-        return top;
+        return this.end;
     }
     
     @Override
@@ -28,16 +28,17 @@ public class Ladder implements BoardEntity {
     }
     
     @Override
-    public int transform(int currentPosition) {
-        if (currentPosition == bottom) {
-            return top;
+    public int transform(int playerPos) {
+        // Check if player is at bottom of ladder
+        if(playerPos == start) {
+            return end; // climb up!
         }
-        return currentPosition;
+        return playerPos; // no change
     }
     
-    @Override
+    @Override  
     public String toString() {
-        return String.format("Ladder{bottom=%d, top=%d}", bottom, top);
+        return String.format("Ladder{bottom=%d, top=%d}", start, end);
     }
 }
 
