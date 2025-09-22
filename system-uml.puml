@@ -1,0 +1,141 @@
+@startuml
+
+package "com.snakeandladder" {
+
+  class SnakeAndLadderGame {
+    -board: Board
+    -players: List<Player>
+    -dice: Dice
+    +SnakeAndLadderGame(numPlayers: int, boardSize: int, numDice: int, boardType: BoardType, difficulty: Difficulty)
+    +play(): void
+  }
+
+  class Board {
+    -size: int
+    -snakes: List<Snake>
+    -ladders: List<Ladder>
+    -cells: List<Cell>
+    +Board(size: int, snakes: "List<Snake>", ladders: "List<Ladder>")
+    +getSize(): int
+    +getSnakes(): "List<Snake>"
+    +getLadders(): "List<Ladder>"
+    +getCell(position: int): Cell
+  }
+
+  class Cell {
+    -position: int
+    -entity: BoardEntity
+    +Cell(position: int)
+    +getPosition(): int
+    +getEntity(): BoardEntity
+    +setEntity(entity: BoardEntity): void
+  }
+
+  abstract class BoardEntity {
+    -start: int
+    -end: int
+    +BoardEntity(start: int, end: int)
+    +getStart(): int
+    +getEnd(): int
+  }
+
+  class Snake extends BoardEntity {
+    +Snake(start: int, end: int)
+  }
+
+  class Ladder extends BoardEntity {
+    +Ladder(start: int, end: int)
+  }
+
+  class Player {
+    -id: int
+    -position: int
+    +Player(id: int)
+    +getId(): int
+    +getPosition(): int
+    +setPosition(position: int): void
+  }
+
+  class Dice {
+    -numDice: int
+    -random: Random
+    +Dice(numDice: int)
+    +roll(): int
+  }
+
+  enum Difficulty {
+    EASY("Easy", 0.1, 0.15)
+    MEDIUM("Medium", 0.15, 0.2)
+    HARD("Hard", 0.2, 0.25)
+    -label: String
+    -snakeRatio: double
+    -ladderRatio: double
+    +getLabel(): String
+    +getSnakeRatio(): double
+    +getLadderRatio(): double
+  }
+
+  enum BoardType {
+    SIMPLE
+    RANDOM
+    BALANCED
+  }
+}
+
+package "com.snakeandladder.strategy" {
+
+  interface BoardGenerationStrategy {
+    +generateBoard(size: int, difficulty: Difficulty): Board
+  }
+
+  abstract class AbstractBoardGenerationStrategy implements BoardGenerationStrategy {
+    #random: Random
+    +AbstractBoardGenerationStrategy(seed: long)
+    +AbstractBoardGenerationStrategy(random: Random)
+  }
+
+  class SimpleBoardGenerationStrategy implements BoardGenerationStrategy {
+    +generateBoard(size: int, difficulty: Difficulty): Board
+  }
+
+  class RandomBoardGenerationStrategy extends AbstractBoardGenerationStrategy {
+    +RandomBoardGenerationStrategy(seed: long)
+    +RandomBoardGenerationStrategy(random: Random)
+    #generateSnakes(totalCells: int, count: int, occupiedPositions: "Set<Integer>"): "List<Snake>"
+    #generateLadders(totalCells: int, count: int, occupiedPositions: "Set<Integer>"): "List<Ladder>"
+    -generateRandomSnake(totalCells: int, occupiedPositions: "Set<Integer>"): Snake
+    -generateRandomLadder(totalCells: int, occupiedPositions: "Set<Integer>"): Ladder
+  }
+
+  class BalancedBoardGenerationStrategy extends AbstractBoardGenerationStrategy {
+    +BalancedBoardGenerationStrategy()
+    +BalancedBoardGenerationStrategy(seed: long)
+    #generateSnakes(totalCells: int, count: int, occupiedPositions: "Set<Integer>"): "List<Snake>"
+    #generateLadders(totalCells: int, count: int, occupiedPositions: "Set<Integer>"): "List<Ladder>"
+    #postProcessEntities(entities: "List<BoardEntity>", totalCells: int): void
+    -generateSnakeInZone(zoneStart: int, zoneEnd: int, occupiedPositions: "Set<Integer>"): Snake
+    -generateLadderInZone(zoneStart: int, zoneEnd: int, totalCells: int, occupiedPositions: "Set<Integer>"): Ladder
+  }
+}
+
+package "com.snakeandladder.factory" {
+  class BoardGenerationFactory {
+    +getStrategy(type: BoardType, seed: Long): BoardGenerationStrategy
+  }
+}
+
+SnakeAndLadderGame --> Board
+SnakeAndLadderGame --> Player
+SnakeAndLadderGame --> Dice
+Board --> Cell
+Board --> Snake
+Board --> Ladder
+Cell --> BoardEntity
+Snake --|> BoardEntity
+Ladder --|> BoardEntity
+AbstractBoardGenerationStrategy --> Random
+BoardGenerationFactory --> BoardGenerationStrategy
+RandomBoardGenerationStrategy --|> AbstractBoardGenerationStrategy
+BalancedBoardGenerationStrategy --|> AbstractBoardGenerationStrategy
+
+@enduml
